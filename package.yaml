@@ -1,10 +1,10 @@
 name:                haskell-lua
 version:             0.1.0.0
-github:              "githubuser/haskell-lua"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
+github:              "doxterpepper/haskell-lua"
+license:             GPL3
+author:              "Dock O'Neal"
+maintainer:          "mail@dockoneal.com"
+copyright:           "2019 Dock O'Neal"
 
 extra-source-files:
 - README.md

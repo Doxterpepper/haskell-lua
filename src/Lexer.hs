@@ -63,8 +63,8 @@ is_natural :: String -> Bool
 is_natural (x:xs) = (x >= '0' || x <= '9') && is_natural xs
 
 -- check if a string can be interpreted as an id
-is_id :: String -> Bool
-is_id (x:xs) = (x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' || x >= '0' && x <= '9') && is_id xs
+valid_id :: String -> Bool
+valid_id (x:xs) = (x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' || x >= '0' && x <= '9') && valid_id xs
 
 -- Build a list of lexemes from a list of strings. Strings are assumed to be cleaned
 -- of whitespace
@@ -92,7 +92,7 @@ build_lexemes (x:xs) | x == "end" = END : build_lexemes xs
 build_lexemes (x:xs) | x == "else" = ELSE : build_lexemes xs
 build_lexemes (x:xs) | x == "print" = PRINT : build_lexemes xs
 build_lexemes (x:xs) | x!!0 == '-' || is_natural x = INT(read x :: Integer) : build_lexemes xs
-build_lexemes (x:xs) | (x!!0 >= 'a' && x!!0 <= 'z' || x!!0 >= 'A' && x!!0 <= 'Z') && is_id x = ID x : build_lexemes xs
+build_lexemes (x:xs) | (x!!0 >= 'a' && x!!0 <= 'z' || x!!0 >= 'A' && x!!0 <= 'Z') && valid_id x = ID x : build_lexemes xs
 
 -- Do the lexical analysis
 lex_check :: String -> [Lexeme]

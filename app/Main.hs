@@ -1,6 +1,12 @@
 module Main where
 
-import Lib
+import Lexer
 
 main :: IO ()
-main = someFunc
+main = do 
+    let program = "function ( )\n\
+    \    print ( 100 )\n\
+    \ end"
+    let lexemes = lex_check program
+    print "test"
+

@@ -28,72 +28,73 @@ module Lexer
         ELSE,
         PRINT
     ),
-    lex_check
+    lexCheck
 ) where
 
--- Lexeme data type
-data Lexeme = ID String -- begins with character a-z then alpha numeric
-    | INT Integer       -- number belonging to the integers
-    | ASSIGN            -- =
-    | LE                -- <= 
-    | LT                -- < 
-    | GE                -- >=
-    | GT                -- > 
-    | EQ                -- ==
-    | NE                -- ~=
-    | ADD               -- +
-    | SUB               -- -
-    | DIV               -- /
-    | MUL               -- *
-    | IF                -- if
-    | WHILE             -- while
-    | DO                -- do
-    | LPAR              -- (
-    | RPAR              -- )
-    | REPEAT            -- repeat
-    | UNTIL             -- until
-    | THEN              -- then
-    | FUN               -- function
-    | END               -- end
-    | ELSE              -- else
-    | PRINT             -- print
+-- Lexeme data type.
+data Lexeme
+    = ID String   -- begins with character a-z then alpha numeric.
+    | INT Integer -- number belonging to the integers.
+    | ASSIGN      -- =
+    | LE          -- <= 
+    | LT          -- < 
+    | GE          -- >=
+    | GT          -- > 
+    | EQ          -- ==
+    | NE          -- ~=
+    | ADD         -- +
+    | SUB         -- -
+    | DIV         -- /
+    | MUL         -- *
+    | IF          -- if
+    | WHILE       -- while
+    | DO          -- do
+    | LPAR        -- (
+    | RPAR        -- )
+    | REPEAT      -- repeat
+    | UNTIL       -- until
+    | THEN        -- then
+    | FUN         -- function
+    | END         -- end
+    | ELSE        -- else
+    | PRINT       -- print
 
--- check if a string can be parsed as an integer or not
-is_natural :: String -> Bool
-is_natural (x:xs) = (x >= '0' || x <= '9') && is_natural xs
+-- Check if a string can be parsed as an integer or not.
+isNatural :: String -> Bool
+isNatural (x:xs) = (x >= '0' || x <= '9') && isNatural xs
 
--- check if a string can be interpreted as an id
-valid_id :: String -> Bool
-valid_id (x:xs) = (x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' || x >= '0' && x <= '9') && valid_id xs
+-- Check if a string can be interpreted as an id.
+validId :: String -> Bool
+validId (x:xs) = (x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' || x >= '0' && x <= '9') && validId xs
 
 -- Build a list of lexemes from a list of strings. Strings are assumed to be cleaned
--- of whitespace
-build_lexemes :: [String] -> [Lexeme]
-build_lexemes (x:xs) | x == "+" = ADD : build_lexemes xs
-build_lexemes (x:xs) | x == "=" = ASSIGN : build_lexemes xs
-build_lexemes (x:xs) | x == "<=" = LE : build_lexemes xs
-build_lexemes (x:xs) | x == "<" = Lexer.LT : build_lexemes xs
-build_lexemes (x:xs) | x == ">=" = GE : build_lexemes xs
-build_lexemes (x:xs) | x == ">" = Lexer.GT : build_lexemes xs
-build_lexemes (x:xs) | x == "~=" = NE : build_lexemes xs
-build_lexemes (x:xs) | x == "-" = SUB : build_lexemes xs
-build_lexemes (x:xs) | x == "/" = DIV : build_lexemes xs
-build_lexemes (x:xs) | x == "*" = MUL : build_lexemes xs
-build_lexemes (x:xs) | x == "if" = IF : build_lexemes xs
-build_lexemes (x:xs) | x == "while" = WHILE : build_lexemes xs
-build_lexemes (x:xs) | x == "do" = DO : build_lexemes xs
-build_lexemes (x:xs) | x == "(" = LPAR : build_lexemes xs
-build_lexemes (x:xs) | x == ")" = RPAR : build_lexemes xs
-build_lexemes (x:xs) | x == "repeat" = REPEAT : build_lexemes xs
-build_lexemes (x:xs) | x == "until" = UNTIL : build_lexemes xs
-build_lexemes (x:xs) | x == "then" = THEN : build_lexemes xs
-build_lexemes (x:xs) | x == "function" = FUN : build_lexemes xs
-build_lexemes (x:xs) | x == "end" = END : build_lexemes xs
-build_lexemes (x:xs) | x == "else" = ELSE : build_lexemes xs
-build_lexemes (x:xs) | x == "print" = PRINT : build_lexemes xs
-build_lexemes (x:xs) | x!!0 == '-' || is_natural x = INT(read x :: Integer) : build_lexemes xs
-build_lexemes (x:xs) | (x!!0 >= 'a' && x!!0 <= 'z' || x!!0 >= 'A' && x!!0 <= 'Z') && valid_id x = ID x : build_lexemes xs
+-- of whitespace.
+buildLexemes :: [String] -> [Lexeme]
+buildLexemes (x:xs) | x == "+" = ADD : buildLexemes xs
+buildLexemes (x:xs) | x == "=" = ASSIGN : buildLexemes xs
+buildLexemes (x:xs) | x == "<=" = LE : buildLexemes xs
+buildLexemes (x:xs) | x == "<" = Lexer.LT : buildLexemes xs
+buildLexemes (x:xs) | x == ">=" = GE : buildLexemes xs
+buildLexemes (x:xs) | x == ">" = Lexer.GT : buildLexemes xs
+buildLexemes (x:xs) | x == "~=" = NE : buildLexemes xs
+buildLexemes (x:xs) | x == "-" = SUB : buildLexemes xs
+buildLexemes (x:xs) | x == "/" = DIV : buildLexemes xs
+buildLexemes (x:xs) | x == "*" = MUL : buildLexemes xs
+buildLexemes (x:xs) | x == "if" = IF : buildLexemes xs
+buildLexemes (x:xs) | x == "while" = WHILE : buildLexemes xs
+buildLexemes (x:xs) | x == "do" = DO : buildLexemes xs
+buildLexemes (x:xs) | x == "(" = LPAR : buildLexemes xs
+buildLexemes (x:xs) | x == ")" = RPAR : buildLexemes xs
+buildLexemes (x:xs) | x == "repeat" = REPEAT : buildLexemes xs
+buildLexemes (x:xs) | x == "until" = UNTIL : buildLexemes xs
+buildLexemes (x:xs) | x == "then" = THEN : buildLexemes xs
+buildLexemes (x:xs) | x == "function" = FUN : buildLexemes xs
+buildLexemes (x:xs) | x == "end" = END : buildLexemes xs
+buildLexemes (x:xs) | x == "else" = ELSE : buildLexemes xs
+buildLexemes (x:xs) | x == "print" = PRINT : buildLexemes xs
+buildLexemes (x:xs) | x!!0 == '-' || isNatural x = INT(read x :: Integer) : buildLexemes xs
+buildLexemes (x:xs) | (x!!0 >= 'a' && x!!0 <= 'z' || x!!0 >= 'A' && x!!0 <= 'Z') && validId x = ID x : buildLexemes xs
 
--- Do the lexical analysis
-lex_check :: String -> [Lexeme]
-lex_check source = build_lexemes $ words source
+-- Do the lexical analysis.
+lexCheck :: String -> [Lexeme]
+lexCheck source = buildLexemes $ words source

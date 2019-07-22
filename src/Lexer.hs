@@ -1,3 +1,4 @@
+-- Lexical analysis module. Includes lexeme data types
 module Lexer
 (
     Lexeme(
@@ -58,13 +59,15 @@ data Lexeme = ID String
     | PRINT
 
 -- check if a string can be parsed as an integer or not
-is_integer :: String -> Bool
-is_integer (x:xs) = (x == '-' || x >= '0' || x <= '9') && is_integer xs
+is_natural :: String -> Bool
+is_natural (x:xs) = (x >= '0' || x <= '9') && is_natural xs
 
 -- check if a string can be interpreted as an id
 is_id :: String -> Bool
 is_id (x:xs) = (x >= 'a' && x <= 'z' || x >= '0' && x <= '9') && is_id xs
 
+-- Build a list of lexemes from a list of strings. Strings are assumed to be cleaned
+-- of whitespace
 build_lexemes :: [String] -> [Lexeme]
 build_lexemes (x:xs) | x == "+" = ADD : build_lexemes xs
 build_lexemes (x:xs) | x == "=" = ASSIGN : build_lexemes xs
@@ -88,8 +91,9 @@ build_lexemes (x:xs) | x == "function" = FUN : build_lexemes xs
 build_lexemes (x:xs) | x == "end" = END : build_lexemes xs
 build_lexemes (x:xs) | x == "else" = ELSE : build_lexemes xs
 build_lexemes (x:xs) | x == "print" = PRINT : build_lexemes xs
-build_lexemes (x:xs) | is_integer x = INT(read x :: Integer) : build_lexemes xs
+build_lexemes (x:xs) | x!!0 == '-' || is_natural x = INT(read x :: Integer) : build_lexemes xs
 build_lexemes (x:xs) | x!!0 >= 'a' && x!!0 <= 'z' && is_id x = ID x : build_lexemes xs
 
+-- Do the lexical analysis
 lex_check :: String -> [Lexeme]
 lex_check source = build_lexemes $ words source

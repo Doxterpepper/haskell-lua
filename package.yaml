@@ -1,7 +1,7 @@
 name:                haskell-lua
 version:             0.1.0.0
 github:              "doxterpepper/haskell-lua"
-license:             GPL3
+license:             GPL-3
 author:              "Dock O'Neal"
 maintainer:          "mail@dockoneal.com"
 copyright:           "2019 Dock O'Neal"
@@ -46,3 +46,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - haskell-lua
+    - HUnit

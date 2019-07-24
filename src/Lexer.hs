@@ -1,7 +1,10 @@
 -- Lexical analysis module. Includes lexeme data types
+
+
 module Lexer
 (
-    Lexeme(
+    Lexeme(Lexeme),
+    Token(
         ID,
         INT,
         ASSIGN,
@@ -31,70 +34,100 @@ module Lexer
     lexCheck
 ) where
 
--- Lexeme data type.
-data Lexeme
-    = ID String   -- begins with character a-z then alpha numeric.
-    | INT Integer -- number belonging to the integers.
-    | ASSIGN      -- =
-    | LE          -- <= 
-    | LT          -- < 
-    | GE          -- >=
-    | GT          -- > 
-    | EQ          -- ==
-    | NE          -- ~=
-    | ADD         -- +
-    | SUB         -- -
-    | DIV         -- /
-    | MUL         -- *
-    | IF          -- if
-    | WHILE       -- while
-    | DO          -- do
-    | LPAR        -- (
-    | RPAR        -- )
-    | REPEAT      -- repeat
-    | UNTIL       -- until
-    | THEN        -- then
-    | FUN         -- function
-    | END         -- end
-    | ELSE        -- else
-    | PRINT       -- print
+import Data.Typeable
+
+-- available tokens in the language
+data Token
+    = ID     -- begins with character a-z then alpha numeric.
+    | INT    -- number belonging to the integers.
+    | ASSIGN -- =
+    | LE     -- <= 
+    | LT     -- < 
+    | GE     -- >=
+    | GT     -- > 
+    | EQ     -- ==
+    | NE     -- ~=
+    | ADD    -- +
+    | SUB    -- -
+    | DIV    -- /
+    | MUL    -- *
+    | IF     -- if
+    | WHILE  -- while
+    | DO     -- do
+    | LPAR   -- (
+    | RPAR   -- )
+    | REPEAT -- repeat
+    | UNTIL  -- until
+    | THEN   -- then
+    | FUN    -- function
+    | END    -- end
+    | ELSE   -- else
+    | PRINT  -- print
+    deriving(Eq, Show)
+
+-- A lexeme is a Token plus the string that makes the token
+data Lexeme = Lexeme { token :: Token, tokenStr :: String } deriving(Show)
+
+instance Eq Lexeme where
+  x == y = token x == token y
+
+isNumeric :: Char -> Bool
+isNumeric c = c >= '0' && c <= '9'
+
+isValidIdChar :: Char -> Bool
+isValidIdChar c = c >= 'a' && c <= 'z'
+    || c >= 'A' && c <= 'Z'
+    || c >= '0' && c <= '9'
 
 -- Check if a string can be parsed as an integer or not.
-isNatural :: String -> Bool
-isNatural (x:xs) = (x >= '0' || x <= '9') && isNatural xs
+isInteger :: String -> Bool
+isInteger "" = False
+isInteger ('-':xs) = case dropWhile isNumeric xs of
+    "" -> True
+    _ -> False
+isInteger s = case dropWhile isNumeric s of
+    "" -> True
+    _ -> False
 
 -- Check if a string can be interpreted as an id.
 validId :: String -> Bool
-validId (x:xs) = (x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' || x >= '0' && x <= '9') && validId xs
+validId "" = False
+validId (x:xs) | x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z' =
+    case dropWhile isValidIdChar xs of
+    "" -> True
+    _ -> False
+
 
 -- Build a list of lexemes from a list of strings. Strings are assumed to be cleaned
 -- of whitespace.
 buildLexemes :: [String] -> [Lexeme]
-buildLexemes (x:xs) | x == "+" = ADD : buildLexemes xs
-buildLexemes (x:xs) | x == "=" = ASSIGN : buildLexemes xs
-buildLexemes (x:xs) | x == "<=" = LE : buildLexemes xs
-buildLexemes (x:xs) | x == "<" = Lexer.LT : buildLexemes xs
-buildLexemes (x:xs) | x == ">=" = GE : buildLexemes xs
-buildLexemes (x:xs) | x == ">" = Lexer.GT : buildLexemes xs
-buildLexemes (x:xs) | x == "~=" = NE : buildLexemes xs
-buildLexemes (x:xs) | x == "-" = SUB : buildLexemes xs
-buildLexemes (x:xs) | x == "/" = DIV : buildLexemes xs
-buildLexemes (x:xs) | x == "*" = MUL : buildLexemes xs
-buildLexemes (x:xs) | x == "if" = IF : buildLexemes xs
-buildLexemes (x:xs) | x == "while" = WHILE : buildLexemes xs
-buildLexemes (x:xs) | x == "do" = DO : buildLexemes xs
-buildLexemes (x:xs) | x == "(" = LPAR : buildLexemes xs
-buildLexemes (x:xs) | x == ")" = RPAR : buildLexemes xs
-buildLexemes (x:xs) | x == "repeat" = REPEAT : buildLexemes xs
-buildLexemes (x:xs) | x == "until" = UNTIL : buildLexemes xs
-buildLexemes (x:xs) | x == "then" = THEN : buildLexemes xs
-buildLexemes (x:xs) | x == "function" = FUN : buildLexemes xs
-buildLexemes (x:xs) | x == "end" = END : buildLexemes xs
-buildLexemes (x:xs) | x == "else" = ELSE : buildLexemes xs
-buildLexemes (x:xs) | x == "print" = PRINT : buildLexemes xs
-buildLexemes (x:xs) | x!!0 == '-' || isNatural x = INT(read x :: Integer) : buildLexemes xs
-buildLexemes (x:xs) | (x!!0 >= 'a' && x!!0 <= 'z' || x!!0 >= 'A' && x!!0 <= 'Z') && validId x = ID x : buildLexemes xs
+buildLexemes [] = []
+buildLexemes (x:xs) | x == "+" = Lexeme ADD x : buildLexemes xs
+buildLexemes (x:xs) | x == "=" = Lexeme ASSIGN x : buildLexemes xs
+buildLexemes (x:xs) | x == "<=" = Lexeme LE x : buildLexemes xs
+buildLexemes (x:xs) | x == "<" = Lexeme Lexer.LT x : buildLexemes xs
+buildLexemes (x:xs) | x == ">=" = Lexeme GE x : buildLexemes xs
+buildLexemes (x:xs) | x == ">" = Lexeme Lexer.GT x : buildLexemes xs
+buildLexemes (x:xs) | x == "~=" = Lexeme NE x : buildLexemes xs
+buildLexemes (x:xs) | x == "-" = Lexeme SUB x : buildLexemes xs
+buildLexemes (x:xs) | x == "/" = Lexeme DIV x : buildLexemes xs
+buildLexemes (x:xs) | x == "*" = Lexeme MUL x : buildLexemes xs
+buildLexemes (x:xs) | x == "if" = Lexeme IF x : buildLexemes xs
+buildLexemes (x:xs) | x == "while" = Lexeme WHILE x : buildLexemes xs
+buildLexemes (x:xs) | x == "do" = Lexeme DO x : buildLexemes xs
+buildLexemes (x:xs) | x == "(" = Lexeme LPAR x : buildLexemes xs
+buildLexemes (x:xs) | x == ")" = Lexeme RPAR x : buildLexemes xs
+buildLexemes (x:xs) | x == "repeat" = Lexeme REPEAT x : buildLexemes xs
+buildLexemes (x:xs) | x == "until" = Lexeme UNTIL x : buildLexemes xs
+buildLexemes (x:xs) | x == "then" = Lexeme THEN x : buildLexemes xs
+buildLexemes (x:xs) | x == "function" = Lexeme FUN x : buildLexemes xs
+buildLexemes (x:xs) | x == "end" = Lexeme END x : buildLexemes xs
+buildLexemes (x:xs) | x == "else" = Lexeme ELSE x : buildLexemes xs
+buildLexemes (x:xs) | x == "print" = Lexeme PRINT x : buildLexemes xs
+buildLexemes (x:xs) | x!!0 == '-' || isInteger x = Lexeme INT x : buildLexemes xs
+buildLexemes (x:xs) | (x!!0 >= 'a' && x!!0 <= 'z' || x!!0 >= 'A' && x!!0 <= 'Z') && validId x = Lexeme ID x : buildLexemes xs
+buildLexemes (x:xs) | x /= "" = error ("Unknown token: " ++ x)
 
 -- Do the lexical analysis.
 lexCheck :: String -> [Lexeme]
-lexCheck source = buildLexemes $ words source
+lexCheck source = buildLexemes (words source)

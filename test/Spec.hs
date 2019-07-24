@@ -2,6 +2,8 @@ import Data.Typeable
 import Control.Monad (unless)
 import Test.HUnit
 import Lexer
+import Token
+import Lexeme
 
 assertBool :: String -> Bool -> Assertion
 assertBool msg b = unless b (assertFailure msg)
@@ -13,9 +15,9 @@ test1 = TestCase (assertEqual "Basic tokens are parse correctly"
         Lexeme ADD "+",
         Lexeme ASSIGN "=",
         Lexeme LE "<=",
-        Lexeme Lexer.LT "<",
+        Lexeme Token.LT "<",
         Lexeme GE ">=",
-        Lexeme Lexer.GT ">",
+        Lexeme Token.GT ">",
         Lexeme NE "~=",
         Lexeme SUB "-",
         Lexeme DIV "/",

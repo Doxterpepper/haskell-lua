@@ -1,75 +1,12 @@
 -- Lexical analysis module. Includes lexeme data types
 
-
 module Lexer
 (
-    Lexeme(Lexeme),
-    Token(
-        ID,
-        INT,
-        ASSIGN,
-        LE,
-        LT,
-        GE,
-        GT,
-        EQ,
-        NE,
-        ADD,
-        SUB,
-        DIV,
-        MUL,
-        IF,
-        WHILE,
-        DO,
-        LPAR,
-        RPAR,
-        REPEAT,
-        UNTIL,
-        THEN,
-        FUN,
-        END,
-        ELSE,
-        PRINT
-    ),
     lexCheck
 ) where
 
-import Data.Typeable
-
--- available tokens in the language
-data Token
-    = ID     -- begins with character a-z then alpha numeric.
-    | INT    -- number belonging to the integers.
-    | ASSIGN -- =
-    | LE     -- <= 
-    | LT     -- < 
-    | GE     -- >=
-    | GT     -- > 
-    | EQ     -- ==
-    | NE     -- ~=
-    | ADD    -- +
-    | SUB    -- -
-    | DIV    -- /
-    | MUL    -- *
-    | IF     -- if
-    | WHILE  -- while
-    | DO     -- do
-    | LPAR   -- (
-    | RPAR   -- )
-    | REPEAT -- repeat
-    | UNTIL  -- until
-    | THEN   -- then
-    | FUN    -- function
-    | END    -- end
-    | ELSE   -- else
-    | PRINT  -- print
-    deriving(Eq, Show)
-
--- A lexeme is a Token plus the string that makes the token
-data Lexeme = Lexeme { token :: Token, tokenStr :: String } deriving(Show)
-
-instance Eq Lexeme where
-  x == y = token x == token y
+import Token
+import Lexeme
 
 isNumeric :: Char -> Bool
 isNumeric c = c >= '0' && c <= '9'
@@ -105,9 +42,9 @@ buildLexemes [] = []
 buildLexemes (x:xs) | x == "+" = Lexeme ADD x : buildLexemes xs
 buildLexemes (x:xs) | x == "=" = Lexeme ASSIGN x : buildLexemes xs
 buildLexemes (x:xs) | x == "<=" = Lexeme LE x : buildLexemes xs
-buildLexemes (x:xs) | x == "<" = Lexeme Lexer.LT x : buildLexemes xs
+buildLexemes (x:xs) | x == "<" = Lexeme Token.LT x : buildLexemes xs
 buildLexemes (x:xs) | x == ">=" = Lexeme GE x : buildLexemes xs
-buildLexemes (x:xs) | x == ">" = Lexeme Lexer.GT x : buildLexemes xs
+buildLexemes (x:xs) | x == ">" = Lexeme Token.GT x : buildLexemes xs
 buildLexemes (x:xs) | x == "~=" = Lexeme NE x : buildLexemes xs
 buildLexemes (x:xs) | x == "-" = Lexeme SUB x : buildLexemes xs
 buildLexemes (x:xs) | x == "/" = Lexeme DIV x : buildLexemes xs
